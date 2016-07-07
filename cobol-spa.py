@@ -1,5 +1,9 @@
 #!/usr/bin/python
 
+# COBOL Static Program Analysis
+# cobol-spa (c) 2016 Philip Busch <vzxwco@gmail.com>
+# See https://github.com/vzxwco/cobol-spa
+
 import fileinput
 import argparse
 import sys
