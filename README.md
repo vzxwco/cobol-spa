@@ -10,4 +10,4 @@ Two output formats are supported:
 * JSON (for further processing)
 * DOT (graph description language)
 
-COBOL grammar is nasty. cobol-spa parses only simple statements. In control flow mode, cobol-spa searches for SECTION <FOO> and PERFORM <SECTION> statements to determine section calls. In dependency mode, cobol-spa searches for CALL <MODULE> statements to determine module calls.
+COBOL grammar is nasty. cobol-spa parses only simple statements. In control flow mode, cobol-spa searches for SECTION &lt;FOO&gt; and PERFORM &lt;SECTION&gt; statements to determine section calls. In dependency mode, cobol-spa searches for CALL &lt;MODULE&gt; statements to determine module calls.
