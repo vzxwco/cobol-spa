@@ -23,10 +23,19 @@ def parse_control(infile):
 	"Parse control flow graph."
 	map = {infile.name: {}}
 	section = ''
-	re_section = re.compile('\s*?SECTION\s*(?P<section>\S*)', re.IGNORECASE)
+	re_procdev = re.compile('\s*?PROCEDURE\s*DIVISION\s*?\.', re.IGNORECASE)
+	re_section = re.compile('\s*?(?P<section>\S*)\s*SECTION\s*?\.', re.IGNORECASE)
 	re_perform = re.compile('\s*?PERFORM\s*(?P<perform>\S*)', re.IGNORECASE)
 
+	procdev = False
 	for line in infile:
+		m = re_procdev.match(line)
+		if m:
+			procdev = True
+
+		if not procdev:
+			continue
+
 		m = re_section.match(line)
 		if m:
 			section = m.group('section')
@@ -35,6 +44,9 @@ def parse_control(infile):
 		m = re_perform.match(line)
 		if m:
 			perform = m.group('perform')
+			if perform.upper() == "VARYING" or perform.upper() == "UNTIL":
+				continue
+			map[infile.name].update({perform: []})
 			map[infile.name][section].append(perform)
 	return map
 
@@ -72,6 +84,9 @@ def print_dot(outfile, map):
 	keys = list(map.keys())
 	
 	print ("digraph \"" + keys[0] + "\" {", file=outfile)
+	print ("\tgraph [splines=ortho, concentrate=true, nodesep=0.8, ranksep=3, pad=5.0];", file=outfile)
+	print ('\tnode [shape="box", style="rounded, filled", color="#3366cc", fillcolor="#6699ff", fontname="Arial", fontcolor="white", fontsize="14.0", penwidth = 5];', file=outfile)
+	print ('\tedge [color="black", penwidth = 3];\n', file=outfile)
 
 	if type(map[keys[0]]).__name__ == 'dict':
 		print_dot_dict(outfile, map[keys[0]])
@@ -90,8 +105,8 @@ parser = argparse.ArgumentParser(description='COBOL Static Program Analysis')
 parser.add_argument('-v', '--version', action='version', version='%(prog)s 0.2')
 parser.add_argument('-t', '--type', choices=[TYPE_CONTROL, TYPE_DEP], required=True, help='Static program analysis type')
 parser.add_argument('-f', '--format', choices=[FORMAT_PYTHON, FORMAT_JSON, FORMAT_DOT, FORMAT_SQL], default=FORMAT_PYTHON, help='Output format')
-parser.add_argument('-i', '--infile', nargs='?', type=argparse.FileType('r'), default=sys.stdin, help='Input file (default:stdin)')
-parser.add_argument('-o', '--outfile', nargs='?', type=argparse.FileType('w'), default=sys.stdout, help='Output file (default:stdout)')
+parser.add_argument('-i', '--infile', nargs='?', type=argparse.FileType('r', encoding='UTF-8', errors='ignore'), default=sys.stdin, help='Input file (default:stdin)')
+parser.add_argument('-o', '--outfile', nargs='?', type=argparse.FileType('w', encoding='UTF-8', errors='ignore'), default=sys.stdout, help='Output file (default:stdout)')
 args = parser.parse_args()
 
 # Run parser
