@@ -23,7 +23,7 @@ def parse_control(infile):
 	"Parse control flow graph."
 	map = {infile.name: {}}
 	section = ''
-	re_procdev = re.compile('\s*?PROCEDURE\s*DIVISION\s*?\.', re.IGNORECASE)
+	re_procdev = re.compile('\s*?PROCEDURE\s*DIVISION\s*?', re.IGNORECASE)
 	re_section = re.compile('\s*?(?P<section>\S*)\s*SECTION\s*?\.', re.IGNORECASE)
 	re_perform = re.compile('\s*?PERFORM\s*(?P<perform>\S*)', re.IGNORECASE)
 
